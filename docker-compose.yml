@@ -1,0 +1,20 @@
+services:
+  mongodb:
+    image: mongo:6.0
+    container_name: petregister-mongodb
+    restart: unless-stopped
+    # Bound to localhost only: the local database runs without authentication.
+    ports:
+      - '127.0.0.1:${MONGO_PORT:-27017}:27017'
+    volumes:
+      - mongodb_data:/data/db
+    healthcheck:
+      test:
+        ['CMD', 'mongosh', '--quiet', '--eval', "db.adminCommand('ping').ok"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 5s
+
+volumes:
+  mongodb_data:
